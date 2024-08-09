@@ -202,29 +202,53 @@ const initializeFromCode = () => {
   // setCell(9, 4, 9);
   // setCell(9, 9, 1);
 
-  setCell(1, 2, 4);
-  setCell(1, 4, 8);
-  setCell(2, 1, 5);
-  setCell(2, 3, 1);
-  setCell(2, 9, 4);
-  setCell(3, 1, 8);
-  setCell(3, 6, 9);
-  setCell(3, 8, 6);
-  setCell(5, 1, 2);
-  setCell(5, 6, 6);
-  setCell(5, 7, 4);
-  setCell(5, 9, 5);
-  setCell(6, 2, 9);
-  setCell(6, 6, 7);
-  setCell(6, 8, 8);
-  setCell(7, 5, 1);
-  setCell(7, 7, 7);
-  setCell(8, 5, 6);
-  setCell(8, 7, 2);
-  setCell(9, 1, 3);
-  setCell(9, 3, 4);
-  setCell(9, 4, 9);
-  setCell(9, 9, 1);
+  // setCell(1, 2, 4);
+  // setCell(1, 4, 8);
+  // setCell(2, 1, 5);
+  // setCell(2, 3, 1);
+  // setCell(2, 9, 4);
+  // setCell(3, 1, 8);
+  // setCell(3, 6, 9);
+  // setCell(3, 8, 6);
+  // setCell(5, 1, 2);
+  // setCell(5, 6, 6);
+  // setCell(5, 7, 4);
+  // setCell(5, 9, 5);
+  // setCell(6, 2, 9);
+  // setCell(6, 6, 7);
+  // setCell(6, 8, 8);
+  // setCell(7, 5, 1);
+  // setCell(7, 7, 7);
+  // setCell(8, 5, 6);
+  // setCell(8, 7, 2);
+  // setCell(9, 1, 3);
+  // setCell(9, 3, 4);
+  // setCell(9, 4, 9);
+  // setCell(9, 9, 1);
+
+  setCell(1, 1, 9);
+  setCell(1, 2, 8);
+  setCell(1, 4, 6);
+  setCell(1, 8, 3);
+  setCell(1, 9, 1);
+  setCell(2, 3, 7);
+  setCell(3, 1, 6);
+  setCell(3, 4, 5);
+  setCell(3, 5, 4);
+  setCell(4, 6, 8);
+  setCell(4, 7, 3);
+  setCell(4, 8, 7);
+  setCell(4, 9, 4);
+  setCell(5, 5, 6);
+  setCell(6, 7, 9);
+  setCell(6, 9, 2);
+  setCell(7, 2, 3);
+  setCell(7, 3, 2);
+  setCell(7, 6, 7);
+  setCell(7, 7, 4);
+  setCell(8, 2, 4);
+  setCell(8, 4, 3);
+  setCell(8, 8, 1);
 };
 
 /*----------  solving methods  ----------*/
@@ -519,6 +543,122 @@ const sameNotesInQuadrant = () => {
   }
 };
 
+const rowsInQuadrant = () => {
+  for (i = 0; i < 9; i++) {
+    let freqVector = new Array(9).fill(0);
+    let freqPosition = new Array(9);
+    for (let l = 0; l < 9; l++) {
+      freqPosition[l] = [];
+      for (j = 0; j < 9; j++) {
+        freqPosition[l][j] = 0;
+      }
+    }
+    // init freqPosition
+
+    let quadRow = Math.floor(i / 3);
+    let quadCol = i % 3;
+
+    for (j = 0; j < 9; j++) {
+      // inside single quadrant
+
+      slotRow = Math.floor(j / 3);
+      slotCol = j % 3;
+      for (s = 0; s < 9; s++) {
+        if (quadrant[quadRow][quadCol].slot[slotRow][slotCol].value == 0 && quadrant[quadRow][quadCol].slot[slotRow][slotCol].notes[s] == 1) {
+          freqVector[s]++;
+          freqPosition[s][freqVector[s] - 1] = j;
+        }
+      }
+    }
+
+    for (s = 0; s < 9; s++) {
+      if (freqVector[s] > 0 && freqVector[s] < 4) {
+        let row = Math.floor(freqPosition[s][0] / 3); // se trovo tutti sono nella stessa riga, questa e' la riga
+        let foundRow = true;
+
+        for (t = 1; t < freqVector[s]; t++) {
+          if (row != Math.floor(freqPosition[s][t] / 3)) {
+            // non sono nella stessa riga
+            foundRow = false;
+            break;
+          }
+        }
+        // se sei arrivato qui, devi eliminare dalla riga? questo valore?S
+        if (foundRow) {
+          for (c = 0; c < 3; c++) {
+            if (c == quadCol) {
+              continue;
+            }
+            for (col = 0; col < 3; col++) {
+              if (quadrant[quadRow][c].slot[row][col].value != 0) continue;
+              quadrant[quadRow][c].slot[row][col].notes[s] = 0;
+              console.log(`Rimossa nota ${s + 1}, quadrante ${quadRow + 1} ${c + 1}, cella ${row + 1} ${col + 1}`);
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+const columnInQuadrant = () => {
+  for (i = 0; i < 9; i++) {
+    let freqVector = new Array(9).fill(0);
+    let freqPosition = new Array(9);
+    for (let l = 0; l < 9; l++) {
+      freqPosition[l] = [];
+      for (j = 0; j < 9; j++) {
+        freqPosition[l][j] = 0;
+      }
+    }
+    // init freqPosition
+
+    let quadRow = Math.floor(i / 3);
+    let quadCol = i % 3;
+
+    for (j = 0; j < 9; j++) {
+      // inside single quadrant
+
+      slotRow = Math.floor(j / 3);
+      slotCol = j % 3;
+      for (s = 0; s < 9; s++) {
+        if (quadrant[quadRow][quadCol].slot[slotRow][slotCol].value == 0 && quadrant[quadRow][quadCol].slot[slotRow][slotCol].notes[s] == 1) {
+          freqVector[s]++;
+          freqPosition[s][freqVector[s] - 1] = j;
+        }
+      }
+    }
+
+    for (s = 0; s < 9; s++) {
+      if (freqVector[s] > 0 && freqVector[s] < 4) {
+        let col = freqPosition[s][0] % 3; // se trovo tutti sono nella stessa riga, questa e' la riga
+        let foundCol = true;
+
+        for (t = 1; t < freqVector[s]; t++) {
+          if (col != freqPosition[s][t] % 3) {
+            // non sono nella stessa riga
+            foundCol = false;
+            break;
+          }
+        }
+        // se sei arrivato qui, devi eliminare dalla riga? questo valore?S
+        if (foundCol) {
+          for (r = 0; r < 3; r++) {
+            if (r == quadRow) {
+              continue;
+            }
+            for (row = 0; row < 3; row++) {
+              if (quadrant[r][quadCol].slot[row][col].value != 0) continue;
+              quadrant[r][quadCol].slot[row][col].notes[s] = 0;
+              console.log(`Rimossa nota ${s + 1}, quadrante ${r + 1} ${quadCol + 1}, cella ${row + 1} ${col + 1}`);
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
 solve = () => {
   //   initializeTable();
   let updatable = 1;
@@ -527,14 +667,22 @@ solve = () => {
     updateNotes();
     console.log(`\n%c=============== FORCED VALUES ================`, "color: #64cf00");
     updatable = forcedValues();
+    if (updatable) {
+      console.log(`\n%c============== UPDATING NOTES ================`, "color: #ffca2b");
+      updateNotes();
+    }
+
     console.log(`\n%c============= SAME NOTES IN ROW ==============`, "color: #ffca2b");
     sameNotesInRow();
     console.log(`\n%c=========== SAME NOTES IN COLUMN =============`, "color: #ffca2b");
     sameNotesInColumn();
-    updateNotes();
     console.log(`\n%c========== SAME NOTES IN QUADRANT ============`, "color: #ffca2b");
     sameNotesInQuadrant();
-    updateNotes();
+
+    console.log(`\n%c========== NOTES IN QUADRANT'S ROW ===========`, "color: #ffca2b");
+    rowsInQuadrant();
+    console.log(`\n%c========= NOTES IN QUADRANT'S COLUMN =========`, "color: #ffca2b");
+    columnInQuadrant();
 
     if (!updatable) {
       console.log(`\n%c============ FORCED VALUES IN ROW ============`, "color: #64cf00");
